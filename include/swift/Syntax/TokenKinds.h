@@ -17,6 +17,8 @@
 #ifndef SWIFT_TOKENKINDS_H
 #define SWIFT_TOKENKINDS_H
 
+#include "swift/Basic/LLVM.h"
+
 namespace swift {
 enum class tok {
 #define TOKEN(X) X,

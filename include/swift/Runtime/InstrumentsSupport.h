@@ -18,10 +18,16 @@
 #ifndef SWIFT_RUNTIME_INSTRUMENTS_SUPPORT_H
 #define SWIFT_RUNTIME_INSTRUMENTS_SUPPORT_H
 
+#include "../../../stdlib/public/SwiftShims/Visibility.h"
+
+#include <stdint.h>
+
 #define SWIFT_RT_DECLARE_ENTRY \
   __ptrauth_swift_runtime_function_entry
 
 namespace swift {
+
+struct HeapObject;
 
 // liboainject patches the function pointers and calls the functions below.
 SWIFT_RUNTIME_EXPORT

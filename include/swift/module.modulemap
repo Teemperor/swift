@@ -1,0 +1,311 @@
+
+module Swift_Strings { header "Strings.h" export * }
+
+module Swift_LLVM { header "Basic/LLVM.h" export * }
+
+module Swift_Wrap1 {
+  module Swift_ABI {
+    umbrella "ABI"
+    textual header "ABI/MetadataKind.def"
+    textual header "ABI/ValueWitness.def"
+    module * { export * }
+  }
+
+  module Swift_AST {
+    umbrella "AST"
+    textual header "AST/ASTTypeIDZone.def"
+    textual header "AST/AccessTypeIDZone.def"
+    textual header "AST/AccessorKinds.def"
+    textual header "AST/Attr.def"
+    textual header "AST/Builtins.def"
+    textual header "AST/DeclNodes.def"
+    textual header "AST/DiagnosticsAll.def"
+    textual header "AST/DiagnosticsClangImporter.def"
+    textual header "AST/DiagnosticsCommon.def"
+    textual header "AST/DiagnosticsDriver.def"
+    textual header "AST/DiagnosticsFrontend.def"
+    textual header "AST/DiagnosticsIRGen.def"
+    textual header "AST/DiagnosticsModuleDiffer.def"
+    textual header "AST/DiagnosticsParse.def"
+    textual header "AST/DiagnosticsRefactoring.def"
+    textual header "AST/DiagnosticsSIL.def"
+    textual header "AST/DiagnosticsSema.def"
+    textual header "AST/EducationalNotes.def"
+    textual header "AST/ExprNodes.def"
+    textual header "AST/IRGenTypeIDZone.def"
+    textual header "AST/KnownDecls.def"
+    textual header "AST/KnownFoundationEntities.def"
+    textual header "AST/KnownIdentifiers.def"
+    textual header "AST/KnownProtocols.def"
+    textual header "AST/KnownSDKTypes.def"
+    textual header "AST/KnownStdlibTypes.def"
+    textual header "AST/LocalizationLanguages.def"
+    textual header "AST/MagicIdentifierKinds.def"
+    textual header "AST/NameLookupTypeIDZone.def"
+    textual header "AST/ObjCSelectorFamily.def"
+    textual header "AST/ParseTypeIDZone.def"
+    textual header "AST/PatternNodes.def"
+    textual header "AST/PlatformConditionKinds.def"
+    textual header "AST/PlatformKinds.def"
+    textual header "AST/ReferenceStorage.def"
+    textual header "AST/SILGenTypeIDZone.def"
+    textual header "AST/SILOptimizerTypeIDZone.def"
+    textual header "AST/SemanticAttrs.def"
+    textual header "AST/StmtNodes.def"
+    textual header "AST/TBDGenTypeIDZone.def"
+    textual header "AST/TypeCheckerTypeIDZone.def"
+    textual header "AST/TypeNodes.def"
+    textual header "AST/TypeReprNodes.def"
+
+    textual header "AST/DefineDiagnosticMacros.h"
+
+    // Pulls in SIL via Linking.h...
+    exclude header "AST/TBDGenRequests.h"
+    exclude header "AST/SILGenRequests.h"
+    exclude header "AST/SILOptimizerRequests.h"
+
+    module * { export * }
+  }
+
+  module Swift_Basic {
+    requires cplusplus
+    umbrella "Basic"
+
+    textual header "Basic/CTypeIDZone.def"
+    textual header "Basic/FileTypes.def"
+    textual header "Basic/Sanitizers.def"
+    textual header "Basic/Statistics.def"
+    // TODO: Fails to lex on its own.
+    exclude header "Basic/DefineTypeIDZone.h"
+    exclude header "Basic/ImplementTypeIDZone.h"
+
+    exclude header "Basic/LLVM.h"
+
+    // Included by SwiftShims.
+    exclude header "Basic/Compiler.h"
+    exclude header "Basic/type_traits.h"
+    exclude header "Basic/Unreachable.h"
+    module * { export * }
+  }
+
+  module Swift_Demangling {
+    umbrella "Demangling"
+    textual header "Demangling/DemangleNodes.def"
+    textual header "Demangling/StandardTypesMangling.def"
+    textual header "Demangling/ValueWitnessMangling.def"
+    module * { export * }
+  }
+
+  module Swift_Markup {
+    umbrella "Markup"
+    textual header "Markup/ASTNodes.def"
+    textual header "Markup/SimpleFields.def"
+    module * { export * }
+  }
+
+  /*module Swift_Runtime {
+    umbrella "Runtime"
+    textual header "Runtime/BuiltinTypes.def"
+    textual header "Runtime/RuntimeFunctions.def"
+
+    // Used by stdlib and have their own modules defined below.
+    exclude header "Runtime/Atomic.h"
+    exclude header "Runtime/BackDeployment.h"
+    exclude header "Runtime/Config.h"
+    exclude header "Runtime/Debug.h"
+    exclude header "Runtime/Mutex.h"
+    exclude header "Runtime/InstrumentsSupport.h"
+
+    // Windows-specific header.
+    exclude header "Runtime/MutexWin32.h"
+    exclude header "Runtime/MutexPThread.h"
+    module * { export * }
+  } */
+
+  module Swift_Syntax {
+    umbrella "Syntax"
+    // FIXME: This header has hundreds of errors.
+    exclude header "Syntax/Serialization/SyntaxDeserialization.h"
+    module * { export * }
+  }
+
+  module Swift_IRGen {
+    umbrella "IRGen"
+    // Pulls in SIL...
+    exclude header "IRGen/Linking.h"
+    module * { export * }
+  }
+
+  module Swift_TBDGen {
+    umbrella "TBDGen"
+    module * { export * }
+  }
+
+  module Swift_Reflection {
+    umbrella "Reflection"
+    textual header "Reflection/MetadataSources.def"
+    textual header "Reflection/TypeRefs.def"
+
+    // FIXME: The anonymous namespace here causes lookup issues
+    // with modules.
+    exclude header "Reflection/ReflectionContext.h"
+    module * { export * }
+  }
+
+  /*module Swift_SwiftRemoteMirror {
+    umbrella "SwiftRemoteMirror"
+    module * { export * }
+  } */
+
+  module Swift_Syntax_Serialization {
+    umbrella "Syntax/Serialization"
+    module * { export * }
+  }
+
+  module Swift_Remote {
+    umbrella "Remote"
+    textual header "Remote/FailureKinds.def"
+    module * { export * }
+  }
+}
+
+ //module Swift_Runtime_Atomic { header "Runtime/Atomic.h" export * }
+ //module Swift_Runtime_BackDeployment { header "Runtime/BackDeployment.h" export * }
+ module Swift_Runtime_Config { header "Runtime/Config.h" export * }
+ //module Swift_Runtime_Debug { header "Runtime/Debug.h" export * }
+
+ module Swift_Runtime_InstrumentsSupport { header "Runtime/InstrumentsSupport.h" export * }
+ module Swift_Runtime_Mutex { header "Runtime/Mutex.h" export * }
+
+module Swift_ASTSectionImporter {
+  umbrella "ASTSectionImporter"
+  module * { export * }
+}
+
+module Swift_ClangImporter {
+  umbrella "ClangImporter"
+  textual header "ClangImporter/BuiltinMappedTypes.def"
+  textual header "ClangImporter/SIMDMappedTypes.def"
+  module * { export * }
+}
+
+module Swift_Driver {
+  umbrella "Driver"
+  module * { export * }
+}
+
+module Swift_Wrap2 {
+  module Swift_Frontend {
+    umbrella "Frontend"
+    textual header "Frontend/BackDeploymentLibs.def"
+    module * { export * }
+  }
+
+  module Swift_Migrator {
+    umbrella "Migrator"
+    module * { export * }
+  }
+
+  module Swift_Serialization {
+    umbrella "Serialization"
+    module * { export * }
+  }
+}
+
+module Swift_FrontendTool {
+  umbrella "FrontendTool"
+  module * { export * }
+}
+
+module Swift_IDE {
+  umbrella "IDE"
+  textual header "IDE/DigesterEnums.def"
+  textual header "IDE/IDERequestIDZone.def"
+  textual header "IDE/IDETypeIDZone.def"
+  textual header "IDE/RefactoringKinds.def"
+  module * { export * }
+}
+
+module Swift_Immediate {
+  umbrella "Immediate"
+  module * { export * }
+}
+
+module Swift_Index {
+  umbrella "Index"
+  module * { export * }
+}
+
+module Swift_LLVMPasses {
+  umbrella "LLVMPasses"
+  module * { export * }
+}
+
+module Swift_Localization {
+  umbrella "Localization"
+  module * { export * }
+}
+
+module Swift_Option {
+  umbrella "Option"
+  module * { export * }
+}
+
+module Swift_Parse {
+  umbrella "Parse"
+  textual header "Parse/Confusables.def"
+  module * { export * }
+}
+
+module Swift_PrintAsObjC {
+  umbrella "PrintAsObjC"
+  module * { export * }
+}
+
+module Swift_RemoteAST {
+  umbrella "RemoteAST"
+  module * { export * }
+}
+
+
+module Swift_SILOptimizer {
+
+  module Swift_SIL {
+    umbrella "SIL"
+    textual header "SIL/SILNodes.def"
+    textual header "SIL/BridgedTypes.def"
+    module * { export * }
+  }
+
+  umbrella "SILOptimizer"
+  textual header "SILOptimizer/Analysis/Analysis.def"
+  textual header "SILOptimizer/PassManager/PassPipeline.def"
+  textual header "SILOptimizer/PassManager/Passes.def"
+
+  // Uses LLVM_DEBUG in a header, which just won't work.
+  exclude header "SILOptimizer/Differentiation/ADContext.h"
+  module * { export * }
+}
+
+module Swift_Sema {
+  umbrella "Sema"
+  textual header "Sema/ConstraintLocatorPathElts.def"
+  textual header "Sema/ConstraintSolverStats.def"
+  textual header "Sema/IDETypeCheckingRequestIDZone.def"
+  module * { export * }
+}
+
+module Swift_SwiftDemangle {
+  umbrella "SwiftDemangle"
+  module * { export * }
+}
+
+module Swift_SymbolGraphGen {
+  umbrella "SymbolGraphGen"
+  module * { export * }
+}
+
+module Swift_SyntaxParse {
+  umbrella "SyntaxParse"
+  module * { export * }
+}

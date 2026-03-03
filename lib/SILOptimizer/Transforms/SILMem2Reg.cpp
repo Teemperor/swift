@@ -1981,9 +1981,16 @@ void MemoryToRegisters::removeSingleBlockAllocation(AllocStackInst *asi) {
             LiveValues::toReplace(asi,
                                   /*replacement=*/initialValue),
             /*isStorageValid=*/!doesLoadInvalidateStorage(inst)};
-        if (auto varInfo = asi->getVarInfo()) {
-          SILBuilderWithScope(inst, ctx).createDebugValue(
-              inst->getLoc(), initialValue, *varInfo);
+        if (auto var = asi->getVarInfo()) {
+          const SILFunction *func = inst->getDebugScope()->getInlinedFunction();
+          // The load might be inlined from another function and accesses our
+          // alloc over indirections that were optimized away. The load does
+          // not describe our actual variable `var` but instead a different
+          // local variable in the other function.
+          if (var->Scope->getInlinedFunction() == func) {
+            SILBuilderWithScope(inst, ctx).createDebugValue(inst->getLoc(),
+                                                            initialValue, *var);
+          }
         }
       }
       auto *loadInst = dyn_cast<LoadInst>(inst);

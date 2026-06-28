@@ -291,11 +291,15 @@ if(SWIFT_SHOULD_BUILD_EMBEDDED_STDLIB
       # "aarch64  aarch64-unknown-linux-gnu aarch64-unknown-linux-gnu"
     )
   elseif (SWIFT_HOST_VARIANT STREQUAL "macosx")
-    list(APPEND EMBEDDED_STDLIB_TARGET_TRIPLES
-      "x86_64   x86_64-apple-macos        x86_64-apple-macos14"
-      "arm64    arm64-apple-macos         arm64-apple-macos14"
-      "arm64e   arm64e-apple-macos        arm64e-apple-macos14"
-    )
+    foreach(_embedded_arch x86_64 arm64 arm64e)
+      if(SWIFT_DARWIN_SUPPORTED_ARCHS AND NOT _embedded_arch IN_LIST SWIFT_DARWIN_SUPPORTED_ARCHS)
+        continue()
+      endif()
+      set(_t "macos")
+      list(APPEND EMBEDDED_STDLIB_TARGET_TRIPLES
+        "${_embedded_arch}   ${_embedded_arch}-apple-${_t}   ${_embedded_arch}-apple-${_t}14"
+      )
+    endforeach()
   elseif (SWIFT_HOST_VARIANT STREQUAL "windows")
     list(APPEND EMBEDDED_STDLIB_TARGET_TRIPLES
       # Without specifying the `windows` component LLVM refuses to

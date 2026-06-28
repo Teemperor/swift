@@ -472,7 +472,7 @@ function(_add_swift_runtime_link_flags target relpath_to_lib_dir bootstrapping)
 
     # Note we only check this for bootstrapping, since you ought to
     # be able to build using hosttools with the stdlib disabled.
-    if(ASRLF_BOOTSTRAPPING_MODE MATCHES "BOOTSTRAPPING.*" AND SWIFT_STDLIB_SUPPORT_BACK_DEPLOYMENT)
+    if(ASRLF_BOOTSTRAPPING_MODE MATCHES "BOOTSTRAPPING.*" AND SWIFT_STDLIB_SUPPORT_BACK_DEPLOYMENT AND TARGET HostCompatibilityLibs)
       # HostCompatibilityLibs is defined as an interface library that
       # does not generate any concrete build target
       # (https://cmake.org/cmake/help/latest/command/add_library.html#interface-libraries)
@@ -677,6 +677,13 @@ function(_add_swift_runtime_link_flags target relpath_to_lib_dir bootstrapping)
 
   set_property(TARGET ${target} PROPERTY BUILD_WITH_INSTALL_RPATH YES)
   set_property(TARGET ${target} APPEND PROPERTY INSTALL_RPATH "${swift_runtime_rpath}")
+  # When building with our own libc++/libunwind (LLVM_ENABLE_RUNTIMES), those
+  # libraries land in ${CMAKE_BINARY_DIR}/lib rather than /usr/lib/swift.
+  # Append the build-tree lib dir so dyld finds them when swift-frontend runs
+  # during the build (e.g. for stdlib dependency scanning).
+  if(CMAKE_BINARY_DIR AND APPLE)
+    set_property(TARGET ${target} APPEND PROPERTY INSTALL_RPATH "${CMAKE_BINARY_DIR}/lib")
+  endif()
 endfunction()
 
 # Add a new Swift host library.

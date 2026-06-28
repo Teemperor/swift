@@ -960,7 +960,7 @@ function(_compile_swift_files
     # cross-compiling the compiler.
     list(APPEND swift_compiler_tool_dep "swift-frontend${target_suffix}")
 
-    if(SWIFT_ENABLE_SWIFT_IN_SWIFT)
+    if(SWIFT_ENABLE_SWIFT_IN_SWIFT AND TARGET SwiftMacros)
       # If we aren't cross compiling, also depend on SwiftMacros.
       list(APPEND swift_compiler_tool_dep SwiftMacros)
     endif()

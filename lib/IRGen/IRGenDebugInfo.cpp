@@ -3832,6 +3832,22 @@ void IRGenDebugInfoImpl::emitVariableDeclaration(
   unsigned SizeInBits = 0;
   llvm::DIExpression::FragmentInfo Fragment = {0, 0};
 
+  // A DILocalVariable is uniqued by its (scope, name, line, arg-number), but
+  // not by its type. A generic function that is force-inlined multiple times
+  // with different type arguments (for example through a parameter-pack
+  // expansion) is emitted from a single abstract DISubprogram, so all of its
+  // inlined instances share one DILocalVariable for a given parameter. That
+  // variable's type — and hence its size — is fixed by whichever instance was
+  // emitted first. If the storage for *this* instance is larger than the
+  // variable's type, its value cannot be described with in-bounds fragments;
+  // emitting one anyway would produce an out-of-range DW_OP_LLVM_fragment (and
+  // trip a soundness assertion). Skip emitting a location for this instruction
+  // rather than describing the value incorrectly.
+  if (IsPiece)
+    if (std::optional<uint64_t> VarSizeInBits = Var->getSizeInBits())
+      if (getStorageSizeInBits(IGM.DataLayout, Storage) > *VarSizeInBits)
+        return;
+
   auto appendDIExpression =
       [&VarInfo, this](llvm::DIExpression *DIExpr,
                        llvm::DIExpression::FragmentInfo PieceFragment,

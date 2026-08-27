@@ -478,6 +478,25 @@ class DelegatingCtorClass {
   func method() {}
 }
 
+// Using 'self' as an *argument* to the delegating init call itself (rather
+// than as a preceding statement) used to crash SILGen instead of being
+// diagnosed by DI.
+class DelegatingCtorClassSelfAsArgBase {
+  var x: Int
+  init(x: Int) { self.x = x }
+}
+class DelegatingCtorClassSelfAsArgDerived : DelegatingCtorClassSelfAsArgBase {
+  var y: Int
+  init(x: Int, y: Int) {
+    self.y = y
+    super.init(x: x)
+  }
+
+  convenience init() {
+    self.init(x: 42, y: self.y) // expected-error {{'self' used before 'self.init' call}}
+  }
+}
+
 
 
 //===----------------------------------------------------------------------===//

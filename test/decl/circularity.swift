@@ -116,3 +116,16 @@ class C_54662 { // expected-note {{through reference here}}
     typealias Nest = P_54662 // expected-error {{circular reference}}
 }
 extension C_54662: C_54662.Nest { }
+
+// A cyclic access-level computation (an extension's where-clause naming a
+// member declared in that same extension) used to crash with "access
+// already set" while diagnosing the cycle, instead of just diagnosing it.
+protocol P_AccessCycle {}
+struct S_AccessCycle<T> {}
+extension S_AccessCycle: P_AccessCycle where S_AccessCycle.Member: Equatable {
+  // expected-error@-1 {{extension of generic struct 'S_AccessCycle' has self-referential generic requirements}}
+  // expected-note@-2 {{while resolving type 'S_AccessCycle.Member'}}
+  // expected-note@-3 {{through reference here}}
+  typealias Member = Int // expected-error {{circular reference}}
+  // expected-note@-1 {{through reference here}}
+}

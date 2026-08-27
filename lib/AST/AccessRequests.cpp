@@ -166,6 +166,16 @@ std::optional<AccessLevel> AccessLevelRequest::getCachedResult() const {
 
 void AccessLevelRequest::cacheResult(AccessLevel value) const {
   auto valueDecl = std::get<0>(getStorage());
+
+  // A cyclic dependency on this decl's own access level (e.g. an extension
+  // whose where-clause names a member of that same extension) can cause
+  // this request to be reentered and cached with the evaluator's
+  // consistent cycle-fallback value while the original call is still on
+  // the stack further up. Don't cache (and assert on) that same value
+  // twice.
+  if (valueDecl->hasAccess())
+    return;
+
   valueDecl->setAccess(value);
 }
 

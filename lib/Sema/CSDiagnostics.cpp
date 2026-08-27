@@ -8210,8 +8210,12 @@ void ExpandArrayIntoVarargsFailure::tryDropArrayBracketsFixIt(
                                  diag::suggest_pass_elements_directly);
     diag.fixItRemove(arrayExpr->getLBracketLoc())
         .fixItRemove(arrayExpr->getRBracketLoc());
-    // Handle the case where the array literal has a trailing comma.
-    if (arrayExpr->getNumCommas() == arrayExpr->getNumElements())
+    // Handle the case where the array literal has a trailing comma. An
+    // empty array literal has zero commas and zero elements, which would
+    // otherwise satisfy this check spuriously and index into an empty
+    // comma-locations list below.
+    if (!arrayExpr->getCommaLocs().empty() &&
+        arrayExpr->getNumCommas() == arrayExpr->getNumElements())
       diag.fixItRemove(arrayExpr->getCommaLocs().back());
   }
 }

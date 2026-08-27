@@ -574,6 +574,12 @@ struct PositionsAroundDefaultsAndVariadics {
     f2(true, 21, 22, [4]) // expected-error {{cannot pass array of type '[Int]' as variadic arguments of type 'Int'}}
     // expected-note@-1 {{remove brackets to pass array elements directly}}
 
+    // An empty array literal used to crash instead of diagnosing (it
+    // trivially has as many commas as elements, which the fix-it's
+    // trailing-comma check didn't account for).
+    f2(true, 21, 22, []) // expected-error {{cannot pass array of type '[Int]' as variadic arguments of type 'Int'}}
+    // expected-note@-1 {{remove brackets to pass array elements directly}}
+
     f2(21, 22, 23, c: "3", [4]) // expected-error {{cannot convert value of type 'Int' to expected argument type 'Bool'}}
 
     f2(21, 22, c: "3", [4]) // expected-error {{cannot convert value of type 'Int' to expected argument type 'Bool'}}

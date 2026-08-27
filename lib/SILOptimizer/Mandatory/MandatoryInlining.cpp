@@ -941,6 +941,21 @@ runOnFunctionRecursively(SILOptFunctionBuilder &FuncBuilder, SwiftPassInvocation
           diagnose(F->getModule().getASTContext(), L.getStartSourceLoc(),
                    diag::note_while_inlining);
         }
+        // Complete any lifetime/infinite-loop fixups that inlining earlier
+        // callees into F may have deferred before tearing down F's nested
+        // pass invocation below - it asserts both are already satisfied,
+        // and bailing out here means we skip the normal cleanup that
+        // otherwise handles this at the end of this function.
+        if (F->isDefinition()) {
+          if (F->needBreakInfiniteLoops())
+            breakInfiniteLoops(pi->getPassManager(), F);
+
+          if (F->needCompleteLifetimes()) {
+            pi->getPassManager()->invalidateAnalysis(
+                F, SILAnalysis::InvalidationKind::FunctionBody);
+            completeAllLifetimes(pi->getPassManager(), F);
+          }
+        }
         pi->deinitializeNestedSwiftPassInvocation();
         return false;
       }

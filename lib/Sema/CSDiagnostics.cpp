@@ -7756,7 +7756,12 @@ ArgumentMismatchFailure::buildInfo(const Solution &solution,
     if (locator->findLast<LocatorPathElt::ApplyArgument>(iter)) {
       auto *newLoc = solution.getConstraintLocator(
           locator->getAnchor(), path.drop_back(iter - path.rbegin()));
-      if (hasFixFor(solution, newLoc, FixKind::AddMissingArguments))
+      // Any fix recorded at the call locator (not just AddMissingArguments)
+      // can explain why the per-argument apply info wasn't recorded for
+      // this particular argument - e.g. the solution took some other
+      // recovery path for the call and never got around to solving this
+      // argument normally. Bail out gracefully instead of aborting.
+      if (hasFixFor(solution, newLoc))
         return std::nullopt;
     }
     ABORT("expected function arg apply info for apply argument locator");

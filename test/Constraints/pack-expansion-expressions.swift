@@ -894,3 +894,16 @@ do {
     S { x }.foo() // Make sure we can pick the right 'foo' here.
   }
 }
+
+// A call to a declaration whose parameter list is itself malformed (here,
+// a non-variadic parameter following a variadic pack parameter without a
+// label) used to crash while building the "extra argument" diagnostic for
+// the call, instead of just diagnosing it, because the recorded fix for
+// that call wasn't the one specific kind the diagnostic-building code knew
+// how to gracefully bail out for.
+func packExpansionExtraArgumentsAfterMalformedParams<each T>(_ a: repeat (each T) -> Int, _ b: repeat each T) -> Int { return 0 } // expected-error {{a parameter following a variadic parameter requires a label}}
+let packExpansionExtraArgumentsResult = packExpansionExtraArgumentsAfterMalformedParams(({ _ in 0 }), 1)
+// expected-error@-1 {{argument passed to call that takes no arguments}}
+// expected-error@-2 {{could not infer pack element #1 from context}}
+// expected-note@-4 {{in inferring pack element #1 of 'a'}}
+
